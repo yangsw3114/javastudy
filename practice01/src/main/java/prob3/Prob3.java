@@ -8,6 +8,7 @@ public class Prob3 {
 		int number=0;
 		int share=0;
 		int odd_num=1;
+		int even=2;
 		int sum=0;
 		Scanner scanner = new Scanner(System.in);
 
@@ -25,7 +26,13 @@ public class Prob3 {
 			System.out.println("결과 값: "+sum);
 		}
 		else if(number%2==0) {
-			
+			share=number/2;
+			for(int i=0; i<share; i++) {
+				sum= sum+even;
+				even+=2;
+				
+			}
+			System.out.println("결과 값: "+sum);
 		}
 		scanner.close();
 	}

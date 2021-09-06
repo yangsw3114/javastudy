@@ -13,19 +13,9 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 	
-	<dependencies>
-	</dependencies>
 	
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
-		<resources>
-			<resource>
-				<directory>${project.basedir}/src/main/resources</directory>
-				<excludes>
-					<exclude>**/*.java</exclude>
-				</excludes>
-			</resource>
-		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -45,11 +35,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	<modules>
-		<module>practice01</module>
-		<module>practice02</module>
-		<module>practice03</module>
-		<module>practice04</module>
-		<module>practice05</module>
-	</modules>
 </project>
