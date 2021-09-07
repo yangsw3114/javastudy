@@ -13,12 +13,15 @@ public class Prob5 {
 				count++;
 			if(num==3||num==6||num==9) 
 				count++;
-			
-			System.out.print(i+" ");
-			for(int j=0; j<count; j++) {
-				System.out.print("짝");
+			if(count!=0) {
+				System.out.print(i+" ");
+				for(int j=0; j<count; j++) {
+					System.out.print("짝");
+				}
+				System.out.println();
 			}
-			System.out.println();
+			
+
 	}
 	}
 }
