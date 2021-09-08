@@ -5,6 +5,10 @@ public class Goods {
 	private int price;
 	private int CountStock;
 	
+	public Goods() {
+
+	}
+	
 	public String getName(){
 		return name;
 	}
