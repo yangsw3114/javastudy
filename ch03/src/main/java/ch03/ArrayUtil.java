@@ -1,5 +1,6 @@
 package ch03;
-
+import java.util.*;
+import java.util.stream.IntStream;
 public class ArrayUtil {
 	
 	public static double[] intToDouble(int[] source) {
@@ -14,8 +15,8 @@ public class ArrayUtil {
 	
 	public static int[] concat(int[] s1, int[] s2) {
 		
-		//int[] concate = 
-		return null;
+		int[] concate = IntStream.concat(IntStream.of(s1), IntStream.of(s2)).toArray();
+		return concate;
 	}
 
 }

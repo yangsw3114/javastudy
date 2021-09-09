@@ -28,16 +28,36 @@ public class TV {
 	}
 	
 	public void channel(int num) {
+		if(!power)
+			return;
+		
+		if(num<1) {
+			num=255;
+		}
+		else if(num>255) {
+			num=1;
+		}
 		this.channel=num;
 	}
 	public void channel(boolean tf) {
-		this.channel+=1;
+		channel(channel + (tf?1:-1));
+
 	}
 	
 	public void volume(int num) {
+		if(!power)
+			return;
+		
+		if(num<0) {
+			num=100;
+		}
+		else if(num>100) {
+			num=0;
+		}
+		
 		this.volume=num;
 	}
 	public void volume(boolean tf) {
-		this.volume+=1;
+		volume(volume+(tf?1:-1));
 	}
 }
