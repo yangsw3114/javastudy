@@ -1,7 +1,5 @@
 package prob05;
 
-public class PasswordDismatchException extends Exception{
-	public PasswordDismatchException() {
-		
-	}
+@SuppressWarnings("serial")
+public class PasswordDismatchException extends RuntimeException{
 }
