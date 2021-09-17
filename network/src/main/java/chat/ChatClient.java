@@ -24,37 +24,39 @@ public class ChatClient {
 			socket  = new Socket();
 			
 			//3. 연결
-			socket.connect(new InetSocketAddress("0.0.0.0", 6000)); //IP와 포트 입력
-			ChatServer.log("connected");
+			socket.connect(new InetSocketAddress("127.0.0.1", 6000)); //IP와 포트 입력
+			log("connected");
 			
-			BufferedReader BR = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
+			//BufferedReader BR = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
 			PrintWriter PW = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(),"UTF-8"), true);
 			
-			PW.println("Join: "+ nickname);
-			PW.flush();
+			PW.println("join: "+ nickname); // system.out.println과 동일하게 출력을 해주는 메서드이며,
+			PW.flush();						// 현재 버퍼에 저장되어 있는 내용을 클라이언트나 서버로 전송하고 버퍼를 지운다.
 			
-			new ChatClientThread().start(); //스레드 시작
+			new ChatClientThread(socket).start(); //스레드 시작
 			
 			while(true) {
-				System.out.print(">> ");
+				System.out.print(">>");
 				String input = sc.nextLine();
-				
-				if("quit".equals(input)==true) {
+				if("quit".equals(input.toLowerCase())) { //입력값을 소문자로 치환한 후에 quit과 동일한지 검사
 					//Quit프로토콜 처리
+					PW.println("quit");
+					PW.flush();
 					break;
 				}
-				else {
-					
+				else { //입력하는 메시지들 처리
+					PW.println("message:" + input);
+					PW.flush();
 				}
 				
 			}
 			
 			
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("error: " + e);
 		} catch (IOException e) {
-			ChatServer.log("error " +e);
+			
+			log("error " +e);
 		}
 		finally {
 			try {
@@ -68,11 +70,13 @@ public class ChatClient {
 				
 				
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("error: " + e);
 			}
 			
 		}
+	}
+	public static void log(String log) {
+		System.out.println("[ChatClient] " +  log);
 	}
  
 }

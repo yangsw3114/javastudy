@@ -46,28 +46,32 @@ public class ChatServerThread extends Thread{
 			
 			while(true) { //loop문을 통한 처리
 				String request = BR.readLine();
-				if(request==null) {
+
+				if(request==null) { //클라이언트가 quit를 보내지 않고 소켓을 닫은 경우
 					ChatServer.log("클라이언트로부터 연결 끊김");
+					
 					doQuit(PW);
 					break;
 				}
-				else if(request == "quit") {
-					
+				else if("quit".equals(request)) {
+					ChatServer.log("클라이언트의 요청에 의한 종료");
+					doQuit(PW);
+					break;
 				}
 				
-				ChatServer.log("received:" + request);
-				PW.println(request);
+//				ChatServer.log("received:" + request);
+//				PW.println(request);
 				
 				
 				String[] tokens = request.split(":");
-				if("join".equals(tokens[0])) {
+				if("join".equals(tokens[0])) {  // JOIN:안대혁\r\n
 					doJoin(tokens[1], PW);
 				}
-				else if("message".equals(tokens[0])) {
+				else if("message".equals(tokens[0])) { //MESSAGE:방가;\r\n
 					doMessage(tokens[1]);
 				}
-				else if("quit".equals(tokens[0])) {
-					doQuit();
+				else if("quit".equals(tokens[0])) {  //QUIT\r\n
+					doQuit(PW);
 				}
 				else {
 					ChatServer.log("에러: 알수 없는 요청( " + tokens[0] +" )");
@@ -80,7 +84,7 @@ public class ChatServerThread extends Thread{
 		} catch (UnsupportedEncodingException e) {
 			ChatServer.log("에러: " + e );
 		} catch(IOException e){
-			ChatServer.log("에러: " + e );
+			System.out.println("error: " + e);
 		}finally {
 			try {
 				if(socket != null && socket.isClosed() == false) {
@@ -105,7 +109,10 @@ public class ChatServerThread extends Thread{
 		//writer pool에 현재 스레드의 writer인 printWriter를 저장해야한다
 		addWriter(writer); // writer pool 에 저장
 		
-		PW.println("join:ok"); //방 참여가 성공했다는 것을 클라이언트에게 알려줘야한다.
+		PW.println(data); //방 참여가 성공했다는 것을 클라이언트에게 알려줘야한다.
+		PW.flush();
+		
+		PW.println("join:ok"); 
 		PW.flush();
 	}
 	
@@ -128,7 +135,7 @@ public class ChatServerThread extends Thread{
 	}
 	
 	private void doMessage(String message) { //메시지를 전달하기 위한 요청 메서드
-
+		broadcast(this.nickname + ":" +message);
 	}
 	
 	private void doQuit(Writer writer) { //방을 나가기 위한 요청 메서드
@@ -138,7 +145,9 @@ public class ChatServerThread extends Thread{
 		broadcast(data);
 	}
 	private void removeWriter(Writer writer) { //현재 스레드의 writer를 Writer Pool에서 제거한다.
-		
+		synchronized (listWriters) {
+			listWriters.remove(writer);
+		}
 	}
 
 }
