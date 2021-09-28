@@ -29,14 +29,18 @@ public class ChatWindow {
 	private Panel pannel;
 	private Button buttonSend;
 	private TextField textField;
-	private TextArea textArea;
-
-	public ChatWindow(String name) {
+	public static TextArea textArea;
+	private Socket socket;
+	private PrintWriter PW;
+	
+	public ChatWindow(String name, Socket socket) {
 		frame = new Frame(name);
 		pannel = new Panel();
 		buttonSend = new Button("Send");
 		textField = new TextField();
 		textArea = new TextArea(30, 80);
+		this.socket = socket;
+
 	}
 
 	public void show() {
@@ -50,6 +54,7 @@ public class ChatWindow {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				sendMessage();
+				
 			}
 		});
 
@@ -84,15 +89,25 @@ public class ChatWindow {
 		frame.setVisible(true);
 		frame.pack();
 		
+		
 		/**
 		 * 2. IOStream 가져오기 
 		 */
+		try {
+			PW = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(),"UTF-8"), true);
+		} catch (UnsupportedEncodingException e1) {
+			System.out.println("error: " + e1);
+		} catch (IOException e1) {
+			System.out.println("error: " + e1);
+		}
 		
+
 		/**
 		 * 3. Chat Client Thread 생성
 		 * 
 		 */
 		
+		new GUI_chatclientThread(socket).start();
 	}
 	
 	private void sendMessage() {
@@ -100,9 +115,11 @@ public class ChatWindow {
 		System.out.println("메세지 보내는 프로토콜 구현:" + message);
 		textField.setText("");
 		textField.requestFocus();
+		PW.println("message:" + message);
+		PW.flush();
 		
-		// Receive Thread 에서 서버로 부터 받은 메세지가 있다고 치고~(가짜데이터)
-		updateTextArea("마이콜:" + message);
+//		// Receive Thread 에서 서버로 부터 받은 메세지가 있다고 치고~(가짜데이터)
+//		updateTextArea("마이콜:" + message);
 	}
 	
 	private void updateTextArea(String message) {
@@ -115,52 +132,4 @@ public class ChatWindow {
 		System.exit(0);
 	}
 	
-	public class ChatClientThread extends Thread{
-		private BufferedReader bufferedReader;
-		private PrintWriter printwriter;
-		private Socket socket;
-		
-		public ChatClientThread(Socket socket) {
-			this.socket = socket;
-		}
-
-		@Override
-		public void run() {
-			super.run();
-			
-			//reader를 통해 읽은 데이터 콘솔에 출력하기 
-			try {
-				bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream(),"UTF-8"));
-				printwriter = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(),"UTF-8"), true);
-				
-				while(true) {
-					String receive = bufferedReader.readLine();
-					
-					if(receive == null) {
-						ChatClient.log("입력된 값이 없거나 잘못된 입력값......");
-						break;
-					}
-					else {
-						updateTextArea(receive);
-						//System.out.println(receive);
-
-					}
-				}
-				
-			} catch (UnsupportedEncodingException e) {
-				System.out.println("error: " + e);
-			} catch (IOException e) {
-				System.out.println("채팅이 종료되었습니다.");
-			}finally {
-				try {
-					if(socket != null && socket.isClosed() ==false) 
-					{ 
-						socket.close();
-					}
-				} catch (IOException e) {
-					System.out.println("error: " + e);
-				}
-			}
-		}
-	}
 }

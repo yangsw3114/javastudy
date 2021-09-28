@@ -6,7 +6,6 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Scanner;
 
-import chat.gui.ChatWindow.ChatClientThread;
 
 public class ChatClientApp {
 	public static void main(String[] args) {
@@ -44,11 +43,9 @@ public class ChatClientApp {
 			PrintWriter PW = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(),"UTF-8"), true);
 			//4. join
 			nickname = "join:"+ nickname;
-			PW.println(nickname); // system.out.println과 동일하게 출력을 해주는 메서드이며,
+			PW.println(nickname); // system.out.println과 동일하게 출력을 해주는 메서드이며
 			PW.flush();						// 현재 버퍼에 저장되어 있는 내용을 클라이언트나 서버로 전송하고 버퍼를 지운다.
 			//   String line = br.readLine();
-			
-			new chat.ChatClientThread(socket).start(); //스레드 시작
 			
 		} catch (IOException e) {
 			System.out.println("error: " + e);
@@ -59,7 +56,7 @@ public class ChatClientApp {
 
 		String line = "JOIN:OK";
 		if("JOIN:OK".equals(line)) {
-			new ChatWindow(chat_name).show();
+			new ChatWindow(chat_name, socket).show();
 		}
 	}
 
